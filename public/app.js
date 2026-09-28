@@ -11,6 +11,37 @@
   // Default location: Boca Raton, FL (FAU main campus).
   const BOCA = { name: "Boca Raton", region: "Florida", latitude: 26.3683, longitude: -80.1289 };
 
+  // Major Florida cities for the quick-pick menu. 🦉 marks cities with an FAU campus.
+  const FLORIDA_CITIES = [
+    { name: "Boca Raton", latitude: 26.3683, longitude: -80.1289, fau: true },
+    { name: "Daytona Beach", latitude: 29.2108, longitude: -81.0228 },
+    { name: "Fort Lauderdale", latitude: 26.1224, longitude: -80.1373, fau: true },
+    { name: "Fort Myers", latitude: 26.6406, longitude: -81.8723 },
+    { name: "Fort Pierce", latitude: 27.4467, longitude: -80.3256, fau: true },
+    { name: "Gainesville", latitude: 29.6516, longitude: -82.3248 },
+    { name: "Jacksonville", latitude: 30.3322, longitude: -81.6557 },
+    { name: "Jupiter", latitude: 26.9342, longitude: -80.0942, fau: true },
+    { name: "Key West", latitude: 24.5551, longitude: -81.78 },
+    { name: "Miami", latitude: 25.7617, longitude: -80.1918 },
+    { name: "Naples", latitude: 26.142, longitude: -81.7948 },
+    { name: "Orlando", latitude: 28.5383, longitude: -81.3792 },
+    { name: "Pensacola", latitude: 30.4213, longitude: -87.2169 },
+    { name: "Port St. Lucie", latitude: 27.273, longitude: -80.3582 },
+    { name: "Sarasota", latitude: 27.3364, longitude: -82.5307 },
+    { name: "St. Petersburg", latitude: 27.7676, longitude: -82.6403 },
+    { name: "Tallahassee", latitude: 30.4383, longitude: -84.2807 },
+    { name: "Tampa", latitude: 27.9506, longitude: -82.4572 },
+    { name: "West Palm Beach", latitude: 26.7153, longitude: -80.0534 },
+  ];
+
+  // Logo sources, tried in order: self-hosted official logo (fetched by the
+  // Netlify build), the public-domain original on Wikimedia Commons, then the
+  // placeholder mark that ships in the repo.
+  const LOGO_FALLBACKS = [
+    "https://upload.wikimedia.org/wikipedia/commons/b/b3/Florida_Atlantic_University_logo.svg",
+    "assets/fau-logo.svg",
+  ];
+
   const STORAGE_KEY = "fau-weather-prefs";
 
   // WMO weather interpretation codes -> [description, day icon, night icon]
@@ -162,6 +193,38 @@
     return json.results || [];
   }
 
+  // ---------- Logo ----------
+  function setupLogo() {
+    const img = $("logo");
+    const queue = [...LOGO_FALLBACKS];
+    const next = () => { if (queue.length) img.src = queue.shift(); };
+    img.addEventListener("error", next);
+    // The first source may have failed before this script ran.
+    if (img.complete && img.naturalWidth === 0) next();
+  }
+
+  // ---------- Florida cities ----------
+  function setupCities() {
+    const select = $("city-select");
+    FLORIDA_CITIES.forEach((c, i) => {
+      const opt = el("option", "", c.fau ? `${c.name} 🦉` : c.name);
+      opt.value = String(i);
+      select.append(opt);
+    });
+    select.addEventListener("change", () => {
+      const city = FLORIDA_CITIES[Number(select.value)];
+      if (!city) return;
+      state.place = { name: city.name, region: "Florida", latitude: city.latitude, longitude: city.longitude };
+      hideResults();
+      refresh();
+    });
+  }
+
+  function syncCitySelect() {
+    const i = FLORIDA_CITIES.findIndex((c) => c.latitude === state.place.latitude && c.longitude === state.place.longitude);
+    $("city-select").value = i >= 0 ? String(i) : "";
+  }
+
   // ---------- Rendering ----------
   function render() {
     const d = state.data;
@@ -187,6 +250,7 @@
 
     renderHourly(d);
     renderDaily(d);
+    syncCitySelect();
     document.title = `${deg(cur.temperature_2m)} ${state.place.name} · FAU Owl Weather`;
   }
 
@@ -359,6 +423,8 @@
 
   // ---------- Start ----------
   loadPrefs();
+  setupLogo();
+  setupCities();
   syncUnitButtons();
   refresh();
   // Refresh every 15 minutes while the page is open.

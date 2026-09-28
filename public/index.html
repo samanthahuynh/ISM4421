@@ -15,11 +15,12 @@
 <body>
   <header class="site-header">
     <div class="brand">
-      <img src="assets/fau-logo.svg" alt="FAU logo" class="logo" width="56" height="56">
-      <div>
-        <h1>Owl Weather</h1>
-        <p class="tagline">Florida Atlantic University</p>
-      </div>
+      <span class="logo-badge">
+        <!-- Official FAU logo, downloaded at deploy time by the Netlify build (see netlify.toml).
+             app.js falls back to Wikimedia Commons, then to the local placeholder mark. -->
+        <img id="logo" src="assets/fau-logo-official.svg" alt="Florida Atlantic University" class="logo" height="44">
+      </span>
+      <h1>Owl Weather</h1>
     </div>
     <div class="unit-toggle" role="group" aria-label="Temperature units">
       <button type="button" data-unit="fahrenheit" aria-pressed="true">°F</button>
@@ -34,6 +35,10 @@
       <button type="submit" class="btn">Search</button>
       <button type="button" class="btn btn-secondary" id="locate-btn" title="Use my location">📍 My location</button>
       <button type="button" class="btn btn-secondary" id="home-btn" title="Back to Boca Raton">🦉 Boca</button>
+      <label for="city-select" class="visually-hidden">Florida cities</label>
+      <select id="city-select" class="city-select">
+        <option value="">🌴 Florida cities…</option>
+      </select>
       <ul id="search-results" class="search-results" role="listbox" hidden></ul>
     </form>
 

@@ -51,7 +51,8 @@ a { color: inherit; }
   border-bottom: 5px solid var(--fau-red);
 }
 .brand { display: flex; align-items: center; gap: 12px; }
-.logo { display: block; }
+.logo-badge { display: inline-flex; align-items: center; background: #fff; border-radius: 10px; padding: 6px 10px; }
+.logo { display: block; height: 44px; width: auto; }
 .site-header h1 { margin: 0; font-size: 1.5rem; font-weight: 800; letter-spacing: 0.02em; }
 .tagline { margin: 0; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: #c9d6e3; }
 
@@ -92,6 +93,11 @@ main { max-width: 1040px; margin: 0 auto; padding: 20px 16px 40px; }
 .btn:hover { background: var(--fau-red-dark); border-color: var(--fau-red-dark); }
 .btn-secondary { background: transparent; color: var(--text); border-color: var(--border); }
 .btn-secondary:hover { background: var(--border); border-color: var(--border); }
+.city-select {
+  font: inherit; font-weight: 600; padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  border: 2px solid var(--fau-blue); background: var(--card); color: var(--text);
+}
+.city-select:focus { outline: 2px solid var(--fau-red); outline-offset: 1px; }
 
 .search-results {
   position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
@@ -163,7 +169,9 @@ main { max-width: 1040px; margin: 0 auto; padding: 20px 16px 40px; }
   .range { gap: 6px; }
   .range .lo { width: 30px; }
   .site-header h1 { font-size: 1.2rem; }
-  .logo { width: 44px; height: 44px; }
+  .logo { height: 34px; }
+  .logo-badge { padding: 4px 8px; }
+  .city-select { flex: 1 1 100%; }
   .unit-toggle button { padding: 6px 10px; }
   .details dd { font-size: 1rem; }
 }

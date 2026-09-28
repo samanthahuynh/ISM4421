@@ -1,9 +1,11 @@
 # Netlify configuration for the FAU Owl Weather app.
-# Static site: no build step, Netlify serves the /public folder as-is.
+# Static site: Netlify serves the /public folder. The only build step downloads the
+# official FAU logo (public domain, Wikimedia Commons) so it is self-hosted.
+# If the download fails the deploy still succeeds and the app falls back automatically.
 
 [build]
   publish = "public"
-  command = ""
+  command = "curl -fsSL -A 'FAU-Owl-Weather/1.0 (+https://github.com/samanthahuynh/ISM4421)' -o public/assets/fau-logo-official.svg https://upload.wikimedia.org/wikipedia/commons/b/b3/Florida_Atlantic_University_logo.svg || echo 'Logo download failed; the app will use its fallback logo.'"
 
 # Security headers. connect-src allows the two Open-Meteo endpoints the app calls.
 [[headers]]
@@ -13,7 +15,7 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "geolocation=(self)"
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src https://api.open-meteo.com https://geocoding-api.open-meteo.com"
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://upload.wikimedia.org; connect-src https://api.open-meteo.com https://geocoding-api.open-meteo.com"
 
 # Cache static assets; always revalidate the HTML.
 [[headers]]
@@ -25,9 +27,3 @@
   for = "/*.html"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
-
-# Any unknown path falls back to the app.
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
